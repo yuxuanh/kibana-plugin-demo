@@ -15,7 +15,7 @@ public/less/main.less - is the css, I updated one to cover the exist component s
 3.example data  
 POST /prd_mi_info_user_attri/doc/abc  
 {"custSeg": "MAS","hasDebitCard": "Y"}  
----
+
 
 ## development
 

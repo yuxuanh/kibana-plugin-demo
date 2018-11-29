@@ -4,14 +4,16 @@
 
 ---
 
-## what I change
+## Before development
 
-1.use kibana 'node script/generate_plugin demo' to create this, version is 6.3.2, when you create you need said the version, then you need change back kibana package.json's version to align the plugin version, otherwise it will not work.  
-2.updated  
+1.use kibana 'node script/generate_plugin demo' to create this, version is 6.3.2, when you create this plugin need to fill the version, so you need change back kibana package.json's version to align the plugin version, otherwise it will not work.  
+
+2.what I change  
 package.json - I updated eui version, after added, you need to add plugin-helper back, which use command 'yarn add link:../../kibana/packages/kbn-plugin-helpers' and build again 'yarn kbn bootstrap'  
 server/routes/example.js - is the B/E service part  
 public/components/main/main.js - is the F/E part  
 public/less/main.less - is the css, I updated one to cover the exist component style  
+
 3.example data  
 POST /prd_mi_info_user_attri/doc/abc  
 {"custSeg": "MAS","hasDebitCard": "Y"}  

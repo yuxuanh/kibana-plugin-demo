@@ -9,14 +9,14 @@
 1. use kibana 'node script/generate_plugin demo' to create this, version is 6.3.2, when you create this plugin need to fill the version, so you need change back kibana package.json's version to align the plugin version, otherwise it will not work.  
 
 2. what I change  
-* package.json - I updated eui version, as the old version has bug that can't recognize the search bar query, after added, you need to add plugin-helper back, which use command 'yarn add link:../../kibana/packages/kbn-plugin-helpers' and build again 'yarn kbn bootstrap'  
+* package.json - I updated eui version to 5, so the react and react-dom also need to update, as the old version has bug that can't recognize the search bar query. I also use echart, as eui has so many bug, no idea how to use it. After added, you need to add plugin-helper back, which use command 'yarn add link:../../kibana/packages/kbn-plugin-helpers' and build again 'yarn kbn bootstrap'  
 * server/routes/example.js - is the B/E service part  
 * public/components/main/main.js - is the F/E part  
 * public/less/main.less - is the css, I updated one to cover the exist component style  
 
 3. example data  
 POST /prd_mi_info_user_attri/doc/abc  
-{"custSeg": "MAS","hasDebitCard": "Y"}  
+{"custSeg": "MAS","hasDebitCard": "Y", "wealthAmount":[1,2,3,5,4], "gspLogonAmount":4,"mobileLogonAmount":2,"wechatLogonAmount":1}   
 
 4. cmd
 * 'yarn start' to run the kibana and plugin

@@ -29,49 +29,9 @@ import 'echarts/lib/component/title';
 import 'echarts/lib/component/legend';
 require('./mystyle.css');
 
-
-const once = ['once']
-const icons = ['土豪', '小鲜肉', 'premier'];
 const buttonColor=["primary", "secondary", "warning", "danger", "ghost", "text"];
 const images = ['https://source.unsplash.com/400x200/?Nature', 'https://source.unsplash.com/400x200/?Water', 'https://source.unsplash.com/400x200/?City'];
-const text1 = [<h1 key={0}>Personal Attribute</h1>,<p>Sex: Male</p>,<p>Age: 32</p>,<p>Job: Engineer</p>,<h1 key={0}>Banking Attribute</h1>,<p>CustSeg: PMR</p>,<p>hasDebitCard: Y</p>,<p>hasCreditCard: Y</p>];
-const text = [
-  <h1 key={0}>This is Heading One</h1>,
 
-  <p key={1}>
-    Far out in the uncharted backwaters of the unfashionable end of
-    the western spiral arm of the Galaxy lies a small unregarded
-    yellow sun.
-  </p>,
-
-  <h2 key={0.5}>This is Heading Two</h2>,
-
-  <p key={2}>
-    Orbiting this at a distance of roughly ninety-two million miles
-    is an utterly insignificant little blue green planet whose ape-
-    descended life forms are so amazingly primitive that they still
-    think digital watches are a pretty neat idea.
-  </p>,
-
-  <ul key={3}>
-    <li>List item one</li>
-    <li>List item two</li>
-    <li>Dolphins</li>
-  </ul>,
-];
-const buttonNodes = icons.map(function (item, index) {
-  return (
-    <EuiFlexItem key={index} grow={5}>
-      <EuiButton
-          size="s"
-          fill
-          color={buttonColor[index]}
-        >
-          {item}
-      </EuiButton>
-    </EuiFlexItem>
-  );
-});
 
 const initialQuery = EuiSearchBar.Query.MATCH_ALL;
 const data=[5, 20, 36, 10, 10, 20];
@@ -93,9 +53,14 @@ export class Main extends React.Component {
       //console.log('query: #{query} + #{esQueryDsl}');
       this.setState({ qstr: query.text});
       httpClient.get('../api/test/'+query.text).then((resp) => {
-        this.setState({ time: resp.data._source.custSeg });
+        console.log('first: #{resp.data}')
+        this.setState({ sex: resp.data._source.sex });
+        this.setState({ birthYear: resp.data._source.birthYear });
+        this.setState({ custSeg: resp.data._source.custSeg });
         this.setState({ hasDebitCard: resp.data._source.hasDebitCard });
-        console.log('wealthAmount: #{resp.data._source.wealthAmount}')
+        this.setState({ hasCreditCard: resp.data._source.hasCreditCard });
+        this.setState({ hasInternetBanking: resp.data._source.hasInternetBanking }); 
+
         // barchart
         var barchart = echarts.init(document.getElementById('barchart'));
         barchart.setOption({
@@ -147,12 +112,59 @@ export class Main extends React.Component {
             ]
         });
 
-      });//end
-    }
-  };
+      });//frist query end
+
+
+      httpClient.get('../api/logon/'+query.text).then((resp) => {
+        if(resp.data.hits.hits){
+          const result=resp.data.hits.hits[0]._source;
+          this.setState({ lastLogonTime: result.lastLogonTime });
+          this.setState({ freqLogonChannel: result.freqLogonChannel });
+          this.setState({ freqLogonTimePeriod: result.freqLogonTimePeriod });
+          this.setState({ freqLogonLoc: result.freqLogonLoc });
+
+          const tags=[result.user_logon_pre_tag_1, result.user_logon_pre_tag_2, result.user_logon_pre_tag_3]
+          const buttonNodes = tags.map(function (item, index) {
+            return (
+              <EuiFlexItem key={index} grow={5}>
+                <EuiButton
+                    size="s"
+                    fill
+                    color={buttonColor[index]}
+                  >
+                    {item}
+                </EuiButton>
+              </EuiFlexItem>
+            );
+          });
+          this.setState({ buttonNodes: buttonNodes });
+        }else{
+          this.setState({ lastLogonTime: '' });
+          this.setState({ freqLogonChannel: '' });
+          this.setState({ freqLogonTimePeriod: '' });
+          this.setState({ freqLogonLoc: '' });
+        }
+    });
+  }
+}
 
   //this is after render
   componentDidMount() {
+    const icons = ['none'];
+    const buttonNodes = icons.map(function (item, index) {
+      return (
+        <EuiFlexItem key={index} grow={5}>
+          <EuiButton
+              size="s"
+              fill
+              color={buttonColor[index]}
+            >
+              {item}
+          </EuiButton>
+        </EuiFlexItem>
+      );
+    });
+    this.setState({ buttonNodes: buttonNodes });
     //pie chart 
     var piechart = echarts.init(document.getElementById('piechart'));
     piechart.setOption({
@@ -210,6 +222,7 @@ export class Main extends React.Component {
     const { title } = this.props;
     const ITEM_STYLE = { width: '30%', marginLeft:'30px', marginTop:'30px'};
     const ITEM_STYLE1 = { width: '30%', marginLeft:'10px', marginTop:'30px'};
+    const value = { float:'right', marginRight: '150px'};
     return (
       <EuiPage>
         <EuiPageBody>
@@ -231,14 +244,41 @@ export class Main extends React.Component {
                     </div>
                     <EuiSpacer size="l"/>
                     <EuiText grow={false} size="s">
-                      {text1}
+                      <h1 key={0}>Personal Attribute</h1>
+                        <p>Sex: <div style={value}>{this.state.sex} </div> </p>
+                        <p>birthYear: <div style={value}>{this.state.birthYear}</div></p>
+                      <h1 key={0}>Banking Attribute</h1>
+                        <p>CustSeg: <div style={value}>{this.state.custSeg}</div></p>
+                        <p>HasDebitCard: <div style={value}>{this.state.hasDebitCard}</div></p>
+                        <p>HasCreditCard: <div style={value}>{this.state.hasCreditCard}</div></p>
+                        <p>HasInternetBanking: <div style={value}>{this.state.hasInternetBanking}</div></p>
                     </EuiText>
                   </div>
                 </EuiFlexItem>{/*first column end*/}
                 
                 <EuiFlexItem grow={false} style={ITEM_STYLE1}>{/*second column start*/}
                   <EuiText grow={false} size="s">
-                    {text1}
+                  <h1>Logon Attribute</h1>
+                    <p>Last Logon Time: {this.state.lastLogonTime}</p>
+                    <p>Freq Logon Time Period: <div style={value}>{this.state.freqLogonTimePeriod}</div></p>
+                    <p>Freq Logon Location: <div style={value}>{this.state.freqLogonLoc}</div></p>
+                    <p>Freq Logon Channel: <div style={value}>{this.state.freqLogonChannel}</div></p>
+                  <h1>Transaction Attribute</h1>
+                    <p>Hub Trans Notification:</p>
+                      <ul>
+                        <li>Max Amount:</li>
+                        <li>Avg Amount:</li>
+                      </ul>
+                      <p>Credit Card Trans Notification:</p>
+                      <ul>
+                      <li>Max Amount:</li>
+                      <li>Avg Amount:</li>
+                      </ul>
+                      <p>Moneymoney Count:</p>
+                      <ul>
+                      <li>Max Amount:</li>
+                      <li>Avg Amount:</li>
+                      </ul>
                   </EuiText>
                   <EuiSpacer size="l"/>
                   <EuiText grow={false} size="s">
@@ -246,7 +286,7 @@ export class Main extends React.Component {
                   </EuiText>
                   <EuiSpacer size="s"/>
                   <EuiFlexGroup direction="column">
-                    {buttonNodes}
+                    {this.state.buttonNodes}
                   </EuiFlexGroup>
                 </EuiFlexItem>{/*second column*/}
 

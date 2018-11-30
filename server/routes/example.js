@@ -12,9 +12,24 @@ export default function (server) {
     		reply(response);
       	//reply({ time: (new Date()).toISOString() });
     	}).error(function(response){
-    		reply({"_source":{"custSeg":"error","hasDebitCard":"error"}})
+    		reply({"_source":{"error":"y"}})
     	});
     }
   });
 
+  server.route({
+    path: '/api/logon/{example}',
+    method: 'GET',
+    handler(req, reply) {
+      callWithRequest(req, 'search', {
+        index: 'user_logon_tagging',
+        q: 'custid:'+req.params.example
+      }).then(function(response){
+        reply(response);
+        //reply({ time: (new Date()).toISOString() });
+      }).error(function(response){
+        reply({"_source":{"error":"y"}})
+      });
+    }
+  });
 }

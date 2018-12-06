@@ -3500,6 +3500,11 @@ react-dom@16.3:
     object-assign "^4.1.1"
     prop-types "^15.6.0"
 
+react-imageloader@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/react-imageloader/-/react-imageloader-3.0.0.tgz#a39ddc9f500db189a56020787b4f12963887a275"
+  integrity sha512-uv+gJRO0FkurRTo2W06e39bAlF4jsnjdB0DhEcKaH/TRJ00kAkUcOOkv0ZNDunjHQ9zdRuZAa8Gs1VYtEQIuAA==
+
 react-input-autosize@^2.2.1:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/react-input-autosize/-/react-input-autosize-2.2.1.tgz#ec428fa15b1592994fb5f9aa15bb1eb6baf420f8"

@@ -34,6 +34,7 @@
     "@elastic/eui": "^5.2.0",
     "echarts": "^4.2.0-rc.2",
     "react": "16.3",
-    "react-dom": "16.3"
+    "react-dom": "16.3",
+    "react-imageloader": "^3.0.0"
   }
 }

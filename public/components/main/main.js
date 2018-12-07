@@ -155,14 +155,18 @@ export class Main extends React.Component {
       if(resp.data.hits.hits.length!=0){
         const result=resp.data.hits.hits[0]._source;
         this.setState({ lastLogonTime: result.lastLogonTime.substring(0,10)});
-        this.setState({ freqLogonChannel: result.freqLogonChannel });
+        var freqLogonChannel=result.freqLogonChannel;
+        if(freqLogonChannel && freqLogonChannel.toLowerCase().search('wechat')!=-1){
+          freqLogonChannel='WeChat';
+        }
+        this.setState({ freqLogonChannel: freqLogonChannel });
         this.setState({ freqLogonTimePeriod: result.freqLogonTimePeriod });
         this.setState({ freqLogonLoc: result.freqLogonLoc });
         this.setState({ pointTotal1: result.pointTotal1 });
         this.setState({ creditLimit: result.creditLimit });
         this.setState({ debitBalance: result.debitBalance });
 
-        const tags=[result.user_logon_pre_tag_1,result.user_logon_pre_tag_2,result.user_logon_pre_tag_3];
+        const tags=[result.user_logon_pre_tag_1,result.user_logon_pre_tag_2,result.user_logon_pre_tag_3,result.user_logon_pre_tag_4,result.user_logon_pre_tag_5];
         console.log(tags);
         this.setState({ tag1: tags });
         
@@ -172,7 +176,7 @@ export class Main extends React.Component {
             title: { text: 'Channel Logon Count' },
             tooltip: {},
             xAxis: {
-                data: ['Internet Banking', 'Mobile', 'WeChat']
+                data: ['GSP', 'Mobile', 'WeChat']
             },
             yAxis: {
               type: 'value',
@@ -186,8 +190,9 @@ export class Main extends React.Component {
         });
 
         const data2=[];
+        const nameArray=[];
         const data1=[
-            {value:result.cashInstallInquiryCount, name:'click cash installment menu'},
+            {value:result.cashInstallInquiryCount, name:'cash installment'},
             {value:result.viewCount, name:'reward register'},
             {value:result.statementCount, name:'query statement'},
             {value:result.rewardCount, name:'query reward'},
@@ -195,11 +200,11 @@ export class Main extends React.Component {
             {value:result.limitCount, name:'query limit'},
             {value:result.balanceCount, name:'query balance'},
             {value:result.getInstallmentCount, name:'get installment'},
-            {value:result.transferCount, name:'click transfer menu'},
-            {value:result.openAccountCount, name:'click open account'},
-            {value:result.onlinefxCount, name:'click onlinefx'},
-            {value:result.timeDepositCount, name:'click TD'},
-            {value:result.fundCount, name:'click fund menu'},
+            {value:result.transferCount, name:'transfer'},
+            {value:result.openAccountCount, name:'open account'},
+            {value:result.onlinefxCount, name:'onlinefx'},
+            {value:result.timeDepositCount, name:'TD'},
+            {value:result.fundCount, name:'fund'},
             {value:result.stepupTmdAoCount, name:'buy setup tmd'},
             {value:result.opencdCount, name:'open cd'}
         ];
@@ -207,6 +212,10 @@ export class Main extends React.Component {
           //console.log(x+' '+i)
           if(x.value!=0){
             data2.push(x);
+            console.log(nameArray.length);
+            if(nameArray.length<12){
+              nameArray.push(x.name);
+            }
           }
         });
         //piechart
@@ -216,17 +225,37 @@ export class Main extends React.Component {
                 text: 'User Behaviour Percentage',
                 x:'center'
             },
-            tooltip : {
+            tooltip: {
                 trigger: 'item',
-                formatter: "{a} <br////>{b} : {c} ({d}%)"
+                formatter: "{a} <br/>{b}: {c} ({d}%)"
+            },
+            legend: {
+                orient: 'vertical',
+                x: 'right',
+                data:nameArray,
+                left:'630px'
             },
             series : [
                 {
                     name: 'Behaviour',
                     type: 'pie',
-                    radius : '30%',
+                    radius : '80%',
                     center: ['50%', '50%'],
                     data:data2,
+                    label: {
+                      normal: {
+                          show: true,
+                          position: 'inside',
+                          formatter: '{d}%  '
+                      },
+                      emphasis: {
+                          show: true,
+                          textStyle: {
+                              fontSize: '30',
+                              fontWeight: 'bold'
+                          }
+                      }
+                    },
                     itemStyle: {
                         emphasis: {
                             shadowBlur: 10,
@@ -258,6 +287,7 @@ export class Main extends React.Component {
       this.setState({ ccTotalAmt: result.cupd_trans_total_amount });
       this.setState({ mmMaxAmt: result.movemoney_max_amount_in_cny });
       this.setState({ mmTotalAmt: result.movemoney_total_amount_in_cny });
+      this.setState({ movemoney_pre_channel: result.movemoney_pre_channel });
       this.setState({ hubTransCount: result.hub_trans_count });
       this.setState({ ccCount: result.cupd_trans_count });
       this.setState({ mmCount: result.movemoney_count });
@@ -273,7 +303,7 @@ export class Main extends React.Component {
       this.setState({ wealth_pred_prob: result.wealth_pred_prob });
       setTimeout(() => {
         console.log(this.state.tag1);
-        const tags=[this.state.tag1[0],this.state.tag1[1],this.state.tag1[2],result.user_trans_pre_tag_1,result.user_trans_pre_tag_2,result.user_trans_pre_tag_3];
+        const tags=[this.state.tag1[0],this.state.tag1[1],this.state.tag1[2],this.state.tag1[3],this.state.tag1[4],result.user_trans_pre_tag_1,result.user_trans_pre_tag_2,result.user_trans_pre_tag_3];
         console.log(tags);
         const label_style = { maxWidth: '130px', maxHeight: '30px' };
         const buttonNodes = tags.map(function (item, index) {
@@ -451,7 +481,7 @@ export class Main extends React.Component {
         title: { text: 'Channel Logon Count', x:'center' },
         tooltip: {},
         xAxis: {
-            data: ['Internet Banking', 'Mobile', 'WeChat']
+            data: ['GSP', 'Mobile', 'WeChat']
         },
         yAxis: {
           type: 'value',
@@ -617,6 +647,7 @@ export class Main extends React.Component {
                       <ul>
                       <li>Max Amount: <div style={value}>{this.state.mmMaxAmt} RMB</div></li>
                       <li>Total Amount: <div style={value}>{this.state.mmTotalAmt} RMB</div></li>
+                      <li>Pref Channel: <div style={value}>{this.state.movemoney_pre_channel}</div></li>
                       </ul>
                       <p>Term Deposit Count: <div style={value}>{this.state.tdCount}</div></p>
                       <ul>
@@ -647,7 +678,7 @@ export class Main extends React.Component {
                 </EuiFlexItem>{/*second column*/}
 
                 <EuiFlexItem grow={false} style={ITEM_STYLE}>{/*third column start*/}
-                  <div id="piechart" style={{ width: '80%', height: '40%' }}></div>
+                  <div id="piechart" style={{ width: '900px', height: '50%', left:'-280px'}}></div>
                   <EuiSpacer size="l"/>
                   <div id="barchart" style={{ width: '80%', height: '40%', marginLeft:'30px' }}></div>
                   <EuiSpacer size="l"/>

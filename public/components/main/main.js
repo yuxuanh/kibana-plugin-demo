@@ -17,7 +17,8 @@ import {
   EuiFlexGrid,
   EuiAvatar,
   EuiButton,
-  EuiFieldSearch
+  EuiFieldSearch,
+  EuiFormRow
 } from "@elastic/eui";
 // 引入 ECharts 主模块
 import echarts from 'echarts/lib/echarts';
@@ -165,6 +166,8 @@ export class Main extends React.Component {
         this.setState({ pointTotal1: result.pointTotal1 });
         this.setState({ creditLimit: result.creditLimit });
         this.setState({ debitBalance: result.debitBalance });
+        this.setState({ stat_start_time: result.stat_start_time.substring(0,10) });
+        this.setState({ stat_end_time: result.stat_end_time.substring(0,10) });
 
         const tags=[result.user_logon_pre_tag_1,result.user_logon_pre_tag_2,result.user_logon_pre_tag_3,result.user_logon_pre_tag_4,result.user_logon_pre_tag_5];
         console.log(tags);
@@ -272,6 +275,9 @@ export class Main extends React.Component {
         this.setState({ freqLogonChannel: '' });
         this.setState({ freqLogonTimePeriod: '' });
         this.setState({ freqLogonLoc: '' });
+        this.setState({ pointTotal1: '' });
+        this.setState({ creditLimit: '' });
+        this.setState({ debitBalance: '' });
         this.noPieResultChart();
         this.noBarResultChart();
       }
@@ -401,11 +407,12 @@ export class Main extends React.Component {
       });
     }else{
       this.setState({ hubTransMaxAmt: '' });
-      this.setState({ hubTransAvgAmt: '' });
+      this.setState({ hubTransTotalAmt: '' });
       this.setState({ ccMaxAmt: '' });
-      this.setState({ ccAvgAmt: '' });
+      this.setState({ ccTotalAmt: '' });
       this.setState({ mmMaxAmt: ''  });
-      this.setState({ mmAvgAmt: ''  });
+      this.setState({ mmTotalAmt: ''  });
+      this.setState({ movemoney_pre_channel: '' });
       this.setState({ hubTransCount: '' });
       this.setState({ ccCount: '' });
       this.setState({ mmCount: '' });
@@ -417,6 +424,8 @@ export class Main extends React.Component {
       this.setState({ qrAvgAmt: '' });
       this.setState({ wealth_sub_pre_tag: '' });
       this.setState({ wealth_sub_pre_amount: '' });
+      this.setState({ td_pred_prob: '' });
+      this.setState({ wealth_pred_prob: '' });
       this.noLableResultChart();
       this.noWealthBarResultChart();
     }
@@ -575,21 +584,32 @@ export class Main extends React.Component {
     const ITEM_STYLE = { width: '30%', marginLeft:'30px', marginTop:'30px'};
     const ITEM_STYLE1 = { width: '30%', marginLeft:'10px', marginTop:'30px'};
     const tag_STYLE1 = { width: 500};
+    const Flex_Group_STYLE = { marginTop: '-4px'};
     const value = { float:'right', marginRight: '150px'};
+    var stat_start_time=this.state.stat_start_time;
+    var stat_end_time=this.state.stat_end_time;
+    var stateStr = "";
+    if(stat_start_time){
+      stateStr="stat time: "+stat_start_time+" ~ "+stat_end_time;
+    };
     return (
       <EuiPage>
         <EuiPageBody>
           <EuiPageContent>
             <EuiPageContentBody>
-              <EuiSearchBar
-                box={{
-                  placeholder: 'e.g. custid'
-                }}
-                onChange={this.onChange}
-              />
-              <EuiSpacer size="l"/>
-              <EuiFlexGroup direction="column">
+              <EuiFormRow
+                fullWidth
+                helpText={stateStr}
+              >
+                <EuiSearchBar
+                  box={{
+                    placeholder: 'e.g. custid'
+                  }}
+                  onChange={this.onChange}
+                />
+              </EuiFormRow>
 
+              <EuiFlexGroup direction="column" style={Flex_Group_STYLE}>
                 <EuiFlexItem grow={false} style={ITEM_STYLE}>{/*first column start*/}
                   <div className="div1">
                     <div className="div1-img">
@@ -633,7 +653,7 @@ export class Main extends React.Component {
                   <EuiSpacer size="m"/>
                   <EuiText grow={false} size="s">
                   <h1>Transaction Attribute</h1>
-                    <p>Debit Card Trans Count: <div style={value}>{this.state.hubTransCount}</div></p>
+                    <p>Banking Trans Count: <div style={value}>{this.state.hubTransCount}</div></p>
                       <ul>
                         <li>Max Amount: <div style={value}>{this.state.hubTransMaxAmt} RMB</div></li>
                         <li>Total Amount: <div style={value}>{this.state.hubTransTotalAmt} RMB</div></li>

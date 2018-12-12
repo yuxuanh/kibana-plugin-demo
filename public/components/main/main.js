@@ -1,4 +1,5 @@
 import React from "react";
+import moment from "moment";
 import {
   EuiPage,
   EuiPageHeader,
@@ -133,9 +134,17 @@ export class Main extends React.Component {
   onChange = ({ query, error }) => {
     const { httpClient } = this.props;
     httpClient.get('../api/test/'+query.text).then((resp) => {
-      //console.log(resp)
       this.setState({ sex: resp.data._source.sex });
-      this.setState({ birthYear: resp.data._source.birthYear });
+      var imgUrl='../bundles/male.png';
+      if(resp.data._source.sex=='F'){
+        imgUrl='../bundles/female.png'
+      }
+      console.log(imgUrl)
+      this.setState({ imgUrl: imgUrl });
+      var thisyear=moment().format('YYYY');
+      var age=thisyear-resp.data._source.birthYear;
+      //console.log(age)
+      this.setState({ age: age });
       var custSegDetail;
       if('MAS'==resp.data._source.custSeg){
         custSegDetail='Mass';
@@ -148,11 +157,11 @@ export class Main extends React.Component {
       this.setState({ hasDebitCard: resp.data._source.hasDebitCard });
       this.setState({ hasCreditCard: resp.data._source.hasCreditCard });
       this.setState({ hasInternetBanking: resp.data._source.hasInternetBanking }); 
-      this.setState({ imgUrl: resp.data._source.imgUrl }); 
     });//frist query end
 
 
     httpClient.get('../api/logon/'+query.text).then((resp) => {
+      console.log('logon function')
       if(resp.data.hits.hits.length!=0){
         const result=resp.data.hits.hits[0]._source;
         this.setState({ lastLogonTime: result.lastLogonTime.substring(0,10)});
@@ -160,6 +169,7 @@ export class Main extends React.Component {
         if(freqLogonChannel && freqLogonChannel.toLowerCase().search('wechat')!=-1){
           freqLogonChannel='WeChat';
         }
+        this.setState({ freqDeviceName: result.freqDeviceName });
         this.setState({ freqLogonChannel: freqLogonChannel });
         this.setState({ freqLogonTimePeriod: result.freqLogonTimePeriod });
         this.setState({ freqLogonLoc: result.freqLogonLoc });
@@ -168,9 +178,15 @@ export class Main extends React.Component {
         this.setState({ debitBalance: result.debitBalance });
         this.setState({ stat_start_time: result.stat_start_time.substring(0,10) });
         this.setState({ stat_end_time: result.stat_end_time.substring(0,10) });
+        this.setState({ creditCardStatementDate: result.creditCardStatementDate });
+        this.setState({ creditCardRepaymentDate: result.creditCardRepaymentDate });
+        this.setState({ creditCardStatement: result.creditCardStatement });
+        this.setState({ job: result.job });
+        this.setState({ education: result.education });
+        this.setState({ childAge: result.childAge });
+        this.setState({ marital: result.marital });
 
         const tags=[result.user_logon_pre_tag_1,result.user_logon_pre_tag_2,result.user_logon_pre_tag_3,result.user_logon_pre_tag_4,result.user_logon_pre_tag_5];
-        console.log(tags);
         this.setState({ tag1: tags });
         
         // barchart
@@ -215,7 +231,7 @@ export class Main extends React.Component {
           //console.log(x+' '+i)
           if(x.value!=0){
             data2.push(x);
-            console.log(nameArray.length);
+            //console.log(nameArray.length);
             if(nameArray.length<12){
               nameArray.push(x.name);
             }
@@ -278,6 +294,13 @@ export class Main extends React.Component {
         this.setState({ pointTotal1: '' });
         this.setState({ creditLimit: '' });
         this.setState({ debitBalance: '' });
+        this.setState({ creditCardStatementDate: '' });
+        this.setState({ creditCardStatement: '' });
+        this.setState({ job: '' });
+        this.setState({ education: '' });
+        this.setState({ childAge: '' });
+        this.setState({ marital: '' });
+        this.setState({ creditCardRepaymentDate: '' });
         this.noPieResultChart();
         this.noBarResultChart();
       }
@@ -308,32 +331,38 @@ export class Main extends React.Component {
       this.setState({ td_pred_prob: result.td_pred_prob });
       this.setState({ wealth_pred_prob: result.wealth_pred_prob });
       setTimeout(() => {
-        console.log(this.state.tag1);
+        //console.log(this.state.tag1);
         const tags=[this.state.tag1[0],this.state.tag1[1],this.state.tag1[2],this.state.tag1[3],this.state.tag1[4],result.user_trans_pre_tag_1,result.user_trans_pre_tag_2,result.user_trans_pre_tag_3];
-        console.log(tags);
-        const label_style = { maxWidth: '130px', maxHeight: '30px' };
+        //console.log(tags);
+        const label_style = { maxWidth: '130px', height: '30px'};
+        const label_style1 = { maxWidth: '130px', height: '30px'};
+        var i=-1;
         const buttonNodes = tags.map(function (item, index) {
           console.log('tags function')
-          if('N/A'!={item}.item && index<3){
-            console.log({item}.item)
+          if('N/A'!={item}.item && i<2){
+            i++;
+            //console.log({item}.item)
             return (
               <EuiFlexItem key={index} grow={5} style={label_style}>
                 <EuiButton
                     size="s"
                     fill
-                    color={buttonColor[index]}
+                    color={buttonColor[i]}
+                    style={label_style}
                   >
                     {item}
                 </EuiButton>
               </EuiFlexItem>
             );
-          }else if('N/A'!={item}.item && index>=3){
-            console.log({item}.item)
+          }else if('N/A'!={item}.item && i>=2){
+            i++;
+            //console.log({item}.item)
             return (
-              <EuiFlexItem key={index} grow={5} style={label_style}>
+              <EuiFlexItem key={index} grow={5} style={label_style1}>
                 <EuiButton
                     size="s"
-                    color={buttonColor[index]}
+                    color={buttonColor[i]}
+                    style={label_style1}
                   >
                     {item}
                 </EuiButton>
@@ -380,7 +409,7 @@ export class Main extends React.Component {
             {
                 type: 'category',
                 axisTick: {show: false},
-                data: ['QDII', 'CPI', 'MRF']
+                data: ['QDII', 'CPI', 'MRF', 'LocalUT']
             }
         ],
         yAxis: [
@@ -395,13 +424,13 @@ export class Main extends React.Component {
                 type: 'bar',
                 barGap: 0,
                 label: labelOption,
-                data: [result.qdii_count, result.cpi_count, result.mrf_count]
+                data: [result.qdii_count, result.cpi_count, result.mrf_count, result.localut_count]
             },
             {
                 name: 'Subscription',
                 type: 'bar',
                 label: labelOption,
-                data: [result.qdii_sub_count, result.cpi_cfm_count, result.mrf_cfm_count]
+                data: [result.qdii_sub_count, result.cpi_cfm_count, result.mrf_cfm_count, result.localut_cfm_count]
             }
         ]
       });
@@ -542,7 +571,7 @@ export class Main extends React.Component {
           {
               type: 'category',
               axisTick: {show: false},
-              data: ['QDII', 'CPI', 'MRF']
+              data: ['QDII', 'CPI', 'MRF', 'LocalUT']
           }
       ],
       yAxis: [
@@ -557,13 +586,13 @@ export class Main extends React.Component {
               type: 'bar',
               barGap: 0,
               label: labelOption,
-              data: [0, 0, 0]
+              data: [0, 0, 0, 0]
           },
           {
               name: 'Subscription',
               type: 'bar',
               label: labelOption,
-              data: [0, 0, 0]
+              data: [0, 0, 0, 0]
           }
       ]
     });
@@ -582,7 +611,7 @@ export class Main extends React.Component {
   render() {
     const { title } = this.props;
     const ITEM_STYLE = { width: '30%', marginLeft:'30px', marginTop:'30px'};
-    const ITEM_STYLE1 = { width: '30%', marginLeft:'10px', marginTop:'30px'};
+    const ITEM_STYLE1 = { width: '30%', height:'80%', marginLeft:'10px', marginTop:'30px'};
     const tag_STYLE1 = { width: 500};
     const Flex_Group_STYLE = { marginTop: '-4px'};
     const value = { float:'right', marginRight: '150px'};
@@ -613,13 +642,17 @@ export class Main extends React.Component {
                 <EuiFlexItem grow={false} style={ITEM_STYLE}>{/*first column start*/}
                   <div className="div1">
                     <div className="div1-img">
-                      <img src="../bundles/weixin.jpg"></img>
+                      <img src={this.state.imgUrl}></img>
                     </div>
                     <EuiSpacer size="l"/>
                     <EuiText grow={false} size="s">
                       <h1 key={0}>Personal Attribute</h1>
                         <p>Gender: <div style={value}>{this.state.sex} </div> </p>
-                        <p>birthYear: <div style={value}>{this.state.birthYear}</div></p>
+                        <p>Age: <div style={value}>{this.state.age}</div></p>
+                        <p>Marital: <div style={value}>{this.state.marital} </div> </p>
+                        <p>Child age: <div style={value}>{this.state.childAge}</div></p>
+                        <p>Education: <div style={value}>{this.state.education} </div> </p>
+                        <p>Job: <div style={value}>{this.state.job}</div></p>
                       <h1 key={0}>Banking Attribute</h1>
                         <p>CustSeg: <div style={value}>{this.state.custSeg}</div></p>
                         <p>HasDebitCard: <div style={value}>{this.state.hasDebitCard}</div></p>
@@ -632,6 +665,9 @@ export class Main extends React.Component {
                       <p>Debit Card Balance: <div style={value}>{this.state.debitBalance}</div></p>
                       <p>Credit Card Limit : <div style={value}>{this.state.creditLimit}</div></p>
                       <p>Credit Card Point : <div style={value}>{this.state.pointTotal1}</div></p>
+                      <p>Credit Card Statement : <div style={value}>{this.state.creditCardStatement}</div></p>
+                      <p>Credit Card Statement Date : <div style={value}>{this.state.creditCardStatementDate}</div></p>
+                      <p>Credit Card Repayment Date : <div style={value}>{this.state.creditCardRepaymentDate}</div></p>
                     </EuiText>
                     <EuiSpacer size="l"/>
                     <EuiText grow={false} size="s">
@@ -649,8 +685,9 @@ export class Main extends React.Component {
                     <p>Freq Logon Time Period: <div style={value}>{this.state.freqLogonTimePeriod}</div></p>
                     <p>Freq Logon Location: <div style={value}>{this.state.freqLogonLoc}</div></p>
                     <p>Freq Logon Channel: <div style={value}>{this.state.freqLogonChannel}</div></p>
+                    <p>Freq Logon Device: <div style={value}>{this.state.freqDeviceName}</div></p>
                   </EuiText>
-                  <EuiSpacer size="m"/>
+                  <EuiSpacer size="l"/>
                   <EuiText grow={false} size="s">
                   <h1>Transaction Attribute</h1>
                     <p>Banking Trans Count: <div style={value}>{this.state.hubTransCount}</div></p>
@@ -669,18 +706,18 @@ export class Main extends React.Component {
                       <li>Total Amount: <div style={value}>{this.state.mmTotalAmt} RMB</div></li>
                       <li>Pref Channel: <div style={value}>{this.state.movemoney_pre_channel}</div></li>
                       </ul>
+
+                      {/*comment below part*/}
+                      <p>QR payment Count: <div style={value}>{this.state.qrCount}</div></p>
+                      <ul>
+                      <li>Max Amount: <div style={value}>{this.state.qrMaxAmt} RMB</div></li>
+                      </ul>
+
                       <p>Term Deposit Count: <div style={value}>{this.state.tdCount}</div></p>
                       <ul>
                       <li>Max Amount: <div style={value}>{this.state.tdMaxAmt} RMB</div></li>
                       <li>Total Amount: <div style={value}>{this.state.tdTotalAmt} RMB</div></li>
                       </ul>
-
-                      {/*comment below part*/}
-                      {/* <p>QR payment Count: <div style={value}>{this.state.qrCount}</div></p>
-                      <ul>
-                      <li>Max Amount: <div style={value}>{this.state.qrMaxAmt} RMB</div></li>
-                      <li>Total Amount: <div style={value}>{this.state.qrTotalAmt} RMB</div></li>
-                      </ul> */}
 
                       <p>Wealth</p>
                       <ul>
@@ -692,6 +729,7 @@ export class Main extends React.Component {
                   <EuiText grow={false} size="s">
                   <h1>Label</h1>
                   </EuiText>
+                  <EuiSpacer size="s"/>
                   <EuiFlexGroup style={tag_STYLE1} direction="column" wrap>
                     {this.state.buttonNodes}
                   </EuiFlexGroup>
@@ -702,7 +740,7 @@ export class Main extends React.Component {
                   <EuiSpacer size="l"/>
                   <div id="barchart" style={{ width: '80%', height: '40%', marginLeft:'30px' }}></div>
                   <EuiSpacer size="l"/>
-                  <div id="wealthBarchart" style={{ width: '80%', height: '40%', marginLeft:'30px' }}></div>
+                  <div id="wealthBarchart" style={{ width: '80%', height: '40%',marginLeft:'30px' }}></div>
                 </EuiFlexItem>{/*third column*/}
 
               </EuiFlexGroup>

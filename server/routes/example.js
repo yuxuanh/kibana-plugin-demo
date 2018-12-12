@@ -22,7 +22,7 @@ export default function (server) {
     method: 'GET',
     handler(req, reply) {
       callWithRequest(req, 'search', {
-        index: 'user_logon_tagging',
+        index: 'user_logon_tagging_demo',
         q: 'custid:'+req.params.example
       }).then(function(response){
         reply(response);
@@ -38,7 +38,7 @@ export default function (server) {
     method: 'GET',
     handler(req, reply) {
       callWithRequest(req, 'search', {
-        index: 'user_trans_tagging',
+        index: 'user_trans_tagging_demo',
         q: 'custid:'+req.params.example
       }).then(function(response){
         reply(response);

@@ -6,10 +6,10 @@
 ---
 
 ## Deveopment Basic
-kibana version
+### kibana version  
 ![pic1](./screenshot/kibana package json.png)
 
-path
+### path  
 ![pic1](./screenshot/folder detail1.png)
 ![pic1](./screenshot/folder detail2.png)
 

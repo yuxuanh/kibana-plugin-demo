@@ -6,10 +6,10 @@
 ---
 
 ## Deveopment Basic
-> kibana version
+kibana version
 ![pic1](./screenshot/kibana package json.png)
 
-> path
+path
 ![pic1](./screenshot/folder detail1.png)
 ![pic1](./screenshot/folder detail2.png)
 
@@ -25,8 +25,8 @@
 * public/less/main.less - is the css, I updated one to cover the exist component style  
 
 3. example data  
-POST /prd_mi_info_user_attri/doc/CN123
 ```json  
+POST /prd_mi_info_user_attri/doc/CN123
 {
   "hasInternetBanking": "Y",
   "@timestamp": "2018-11-06T03:01:15.332Z",
@@ -41,8 +41,8 @@ POST /prd_mi_info_user_attri/doc/CN123
 }  
 ```
 
-POST /user_logon_tagging/doc 
 ```json
+POST /user_logon_tagging/doc 
 {
   "custid": "CN123",
   "lastLogonTime": "2018-09-29T23:59:55.000Z",
@@ -89,8 +89,8 @@ POST /user_logon_tagging/doc
 }
 ```
 
-POST /user_trans_tagging/doc
 ```json
+POST /user_trans_tagging/doc
 {
   "custid": "CN123",
   "movemoney_count": 1,

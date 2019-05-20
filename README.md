@@ -7,11 +7,11 @@
 
 ## Deveopment Basic
 ### kibana version  
-![pic1](./screenshot/kibana package json.png)
+![pic2](./screenshot/kibana_package_json.png)
 
 ### path  
-![pic1](./screenshot/folder detail1.png)
-![pic1](./screenshot/folder detail2.png)
+![pic3](./screenshot/folder_detail1.png)
+![pic4](./screenshot/folder_detail2.png)
 
 
 ## My development

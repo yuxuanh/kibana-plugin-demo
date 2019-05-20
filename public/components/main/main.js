@@ -211,21 +211,21 @@ export class Main extends React.Component {
         const data2=[];
         const nameArray=[];
         const data1=[
-            {value:result.cashInstallInquiryCount, name:'cash installment'},
-            {value:result.viewCount, name:'reward register'},
-            {value:result.statementCount, name:'query statement'},
-            {value:result.rewardCount, name:'query reward'},
-            {value:result.preBindingCount, name:'prebinding'},
-            {value:result.limitCount, name:'query limit'},
-            {value:result.balanceCount, name:'query balance'},
-            {value:result.getInstallmentCount, name:'get installment'},
-            {value:result.transferCount, name:'transfer'},
-            {value:result.openAccountCount, name:'open account'},
-            {value:result.onlinefxCount, name:'onlinefx'},
-            {value:result.timeDepositCount, name:'TD'},
-            {value:result.fundCount, name:'fund'},
-            {value:result.stepupTmdAoCount, name:'buy setup tmd'},
-            {value:result.opencdCount, name:'open cd'}
+            {value:result.cashInstallInquiryCount, name:'QDII'},
+            {value:result.viewCount, name:'MRF'},
+            {value:result.statementCount, name:'Check statement'},
+            {value:result.rewardCount, name:'Reward points'},
+            {value:result.preBindingCount, name:'CPI'},
+            //{value:result.limitCount, name:'query limit'},
+            {value:result.balanceCount, name:'Check balance'},
+            //{value:result.getInstallmentCount, name:'get installment'},
+            //{value:result.transferCount, name:'transfer'},
+            //{value:result.openAccountCount, name:'open account'},
+            {value:result.onlinefxCount, name:'Foreign exchange'},
+            {value:result.timeDepositCount, name:'Term Deposit'},
+            {value:result.fundCount, name:'Local UT'},
+            {value:result.stepupTmdAoCount, name:'QR payment'}
+            //{value:result.opencdCount, name:'open cd'}
         ];
         data1.forEach(function (x, i) {
           //console.log(x+' '+i)

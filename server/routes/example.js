@@ -5,7 +5,7 @@ export default function (server) {
     method: 'GET',
     handler(req, reply) {
     	callWithRequest(req, 'get', {
-    		index: 'prd_mi_info_user_attri',
+    		index: 'prd_mi_hub_user_attri',
     		type: 'doc',
     		id: req.params.example
     	}).then(function(response){
@@ -22,7 +22,7 @@ export default function (server) {
     method: 'GET',
     handler(req, reply) {
       callWithRequest(req, 'search', {
-        index: 'user_logon_tagging_demo',
+        index: 'user_logon_tagging',
         q: 'custid:'+req.params.example
       }).then(function(response){
         reply(response);
@@ -38,7 +38,7 @@ export default function (server) {
     method: 'GET',
     handler(req, reply) {
       callWithRequest(req, 'search', {
-        index: 'user_trans_tagging_demo',
+        index: 'user_trans_tagging',
         q: 'custid:'+req.params.example
       }).then(function(response){
         reply(response);
